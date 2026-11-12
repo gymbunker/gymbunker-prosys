@@ -302,6 +302,14 @@ def update_member(member_id: int, member_data: schemas.MemberCreate, db: Session
     clean_phone = str(raw_phone).strip() if raw_phone is not None and str(raw_phone).strip() != "" else None
     data['phone'] = clean_phone
 
+    # Si el socio estaba INACTIVO y se solicita reactivarlo a ACTIVO
+    if db_member.status == 'INACTIVO' and data.get('status') == 'ACTIVO':
+        now_dt = datetime.datetime.utcnow()
+        data['joined_at'] = now_dt
+        m_type = (data.get('membership_type') or db_member.membership_type or '').upper()
+        v_days = 90 if 'TRIMESTRAL' in m_type else (180 if 'SEMESTRAL' in m_type else (365 if 'ANUAL' in m_type else 30))
+        data['next_due_date'] = now_dt + datetime.timedelta(days=v_days)
+        data['status'] = 'ACTIVO'
     if not data.get('joined_at'):
         data['joined_at'] = db_member.joined_at
     # Recalculate status from next_due_date (if present) or joined_at so editing reflects correctly

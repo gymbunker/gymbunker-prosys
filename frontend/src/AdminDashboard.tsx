@@ -1,4 +1,4 @@
-﻿import { LayoutDashboard, Users, User, Brain, DollarSign, Lock, ShieldCheck, Briefcase, Download, CheckCircle, XCircle, Trash2, X, Settings, Receipt, Smartphone, Banknote, Search, Moon, Sun, AlertTriangle , Calendar, Clock, Info, Mail, Eye, EyeOff, Sparkles, QrCode, Star } from 'lucide-react';
+import { LayoutDashboard, Users, User, Brain, DollarSign, Lock, ShieldCheck, Briefcase, Download, CheckCircle, XCircle, Trash2, X, Settings, Receipt, Smartphone, Banknote, Search, Moon, Sun, AlertTriangle , Calendar, Clock, Info, Mail, Eye, EyeOff, Sparkles, QrCode, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
@@ -1990,10 +1990,13 @@ export default function AdminDashboard() {
             "¿Reactivar socio?",
             `¿Deseas reactivar a ${m.name}? Su estado volverá a estar AL DÍA.`,
             async () => {
+              const now = new Date();
+              const nextDue = new Date();
+              nextDue.setDate(nextDue.getDate() + 30);
               const res = await fetch(`${API_URL}/admin/members/${m.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...m, status: 'ACTIVO' })
+                body: JSON.stringify({ ...m, status: 'ACTIVO', joined_at: now.toISOString(), next_due_date: nextDue.toISOString() })
               });
               if (res.ok) refreshData();
             }

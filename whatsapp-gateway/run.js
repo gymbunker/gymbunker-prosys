@@ -24,6 +24,7 @@ const CLOUDFLARED_PATH = 'C:\\Program Files (x86)\\cloudflared\\cloudflared.exe'
 const PORT = process.env.PORT || 3001;
 const TOKEN = process.env.WHATSAPP_API_TOKEN || 'bunker_wa_secret_2026';
 const NGROK_DOMAIN = process.env.NGROK_DOMAIN || ''; // Dominio estático gratuito de ngrok
+const NGROK_AUTHTOKEN = process.env.NGROK_AUTHTOKEN || '3L2II5liPkUz9dUV1U9SLjX32cF_3t7hqpWDrgBepTkqSP5Ru';
 
 const LOG_FILE = path.join(__dirname, 'gateway.log');
 function log(msg) {
@@ -106,6 +107,9 @@ const ngrokExe = getNgrokExecutable();
 if (ngrokExe) {
   log('Iniciando túnel seguro con Ngrok...');
   const ngrokArgs = ['http', String(PORT), '--log=stdout'];
+  if (NGROK_AUTHTOKEN) {
+    ngrokArgs.push(`--authtoken=${NGROK_AUTHTOKEN}`);
+  }
   if (NGROK_DOMAIN) {
     ngrokArgs.push(`--url=${NGROK_DOMAIN}`);
     log(`Usando dominio estático Ngrok: ${NGROK_DOMAIN}`);
