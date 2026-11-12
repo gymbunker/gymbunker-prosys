@@ -66,10 +66,13 @@ echo [OK] Archivo .env configurado con el dominio caramel-gopher-ounce.ngrok-fre
 echo.
 echo [INFO] Instalando arranque automatico con Windows...
 
-:: Generar start_silent.vbs dinamico con la ruta de ESTA computadora
-echo Set WshShell = CreateObject("WScript.Shell")> "%~dp0start_silent.vbs"
-echo WshShell.CurrentDirectory = "%~dp0">> "%~dp0start_silent.vbs"
-echo WshShell.Run "node run.js", 0, False>> "%~dp0start_silent.vbs"
+:: Generar start_silent.vbs dinamico y seguro sin barra invertida final
+(
+echo Set WshShell = CreateObject^("WScript.Shell"^)
+echo Set fso = CreateObject^("Scripting.FileSystemObject"^)
+echo WshShell.CurrentDirectory = fso.GetParentFolderName^(WScript.ScriptFullName^)
+echo WshShell.Run "cmd /c node run.js", 0, False
+) > "%~dp0start_silent.vbs"
 
 set "STARTUP_FOLDER=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup"
 copy /Y "%~dp0start_silent.vbs" "%STARTUP_FOLDER%\BunkerWhatsAppBot.vbs" >nul

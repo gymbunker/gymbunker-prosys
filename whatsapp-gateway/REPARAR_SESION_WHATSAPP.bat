@@ -32,6 +32,12 @@ if exist "auth_info\" (
 )
 
 echo [3/4] Iniciando pasarela en segundo plano...
+(
+echo Set WshShell = CreateObject^("WScript.Shell"^)
+echo Set fso = CreateObject^("Scripting.FileSystemObject"^)
+echo WshShell.CurrentDirectory = fso.GetParentFolderName^(WScript.ScriptFullName^)
+echo WshShell.Run "cmd /c node run.js", 0, False
+) > "%~dp0start_silent.vbs"
 wscript "%~dp0start_silent.vbs"
 timeout /t 3 >nul
 
